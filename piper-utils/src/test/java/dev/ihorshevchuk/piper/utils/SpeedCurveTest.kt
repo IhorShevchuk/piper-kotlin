@@ -6,8 +6,9 @@ import org.junit.Test
 import kotlin.math.abs
 
 /**
- * JVM port of PiperSpeedCurveTests (piper-objc). Guards the exact curve table,
- * the clamp-no-extrapolation behavior, and the AV-vs-multiplier distinction.
+ * Tests for [SpeedCurve]. Guards the exact curve table,
+ * the clamp-no-extrapolation behavior, and the fractional-rate vs
+ * plain-multiplier distinction.
  */
 class SpeedCurveTest {
 

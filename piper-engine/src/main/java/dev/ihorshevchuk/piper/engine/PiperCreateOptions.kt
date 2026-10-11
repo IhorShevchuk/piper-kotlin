@@ -3,8 +3,7 @@ package dev.ihorshevchuk.piper.engine
 /**
  * Options for creating a Piper synthesizer.
  *
- * Direct port of PiperCreateOptions (piper-objc, Swift). Field-for-field mirror;
- * the JNI layer forwards these to piper_create_with_options.
+ * The JNI layer forwards these fields to piper_create_with_options.
  */
 data class PiperCreateOptions(
     /** Path to the ONNX voice model file. Required. */

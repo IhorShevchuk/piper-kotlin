@@ -7,15 +7,14 @@ import java.nio.ByteOrder
 
 /**
  * Writes float32 mono chunks to [file] as a WAV file: 44-byte header, IEEE
- * float (format tag 3), mono, 32-bit, with unspecified RIFF/data sizes - the
- * same layout the Swift side writes (streamed synthesis never knows the
- * total size up front).
+ * float (format tag 3), mono, 32-bit, with unspecified RIFF/data sizes
+ * (streamed synthesis never knows the total size up front).
  */
 internal fun writeWavFloatMono(file: File, chunks: List<FloatArray>, sampleRate: Int) {
     FileOutputStream(file).use { fos ->
         val header = ByteBuffer.allocate(44).order(ByteOrder.LITTLE_ENDIAN)
         header.put("RIFF".toByteArray(Charsets.US_ASCII))
-        header.putInt(-1) // RIFF chunk size: unspecified (streamed), like Swift
+        header.putInt(-1) // RIFF chunk size: unspecified (streamed)
         header.put("WAVE".toByteArray(Charsets.US_ASCII))
         header.put("fmt ".toByteArray(Charsets.US_ASCII))
         header.putInt(16) // fmt chunk size
@@ -26,7 +25,7 @@ internal fun writeWavFloatMono(file: File, chunks: List<FloatArray>, sampleRate:
         header.putShort(4) // block align
         header.putShort(32) // bits per sample
         header.put("data".toByteArray(Charsets.US_ASCII))
-        header.putInt(-1) // data chunk size: unspecified, like Swift
+        header.putInt(-1) // data chunk size: unspecified
         fos.write(header.array())
 
         val buf = ByteBuffer.allocate(8192).order(ByteOrder.LITTLE_ENDIAN)

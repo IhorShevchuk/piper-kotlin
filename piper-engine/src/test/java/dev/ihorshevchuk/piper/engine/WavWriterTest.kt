@@ -8,14 +8,14 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 /**
- * Verifies the WAV layout written by [writeWavFloatMono] (port of the Swift
- * to-file path): 44-byte header, IEEE float, mono, 32-bit, unspecified
+ * Verifies the WAV layout written by [writeWavFloatMono]:
+ * 44-byte header, IEEE float, mono, 32-bit, unspecified
  * RIFF/data sizes, samples round-tripping exactly.
  */
 class WavWriterTest {
 
     @Test
-    fun `wav header matches Swift layout and data round-trips`() {
+    fun `wav header layout and data round-trips`() {
         val file = File.createTempFile("piper-wav", ".wav")
         try {
             writeWavFloatMono(
@@ -29,7 +29,7 @@ class WavWriterTest {
 
             val buf = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN)
             assertEquals("RIFF", ascii(buf, 0, 4))
-            assertEquals(-1, buf.getInt(4)) // unspecified RIFF size, like Swift
+            assertEquals(-1, buf.getInt(4)) // unspecified RIFF size
             assertEquals("WAVE", ascii(buf, 8, 4))
             assertEquals("fmt ", ascii(buf, 12, 4))
             assertEquals(16, buf.getInt(16))
@@ -40,7 +40,7 @@ class WavWriterTest {
             assertEquals(4.toShort(), buf.getShort(32)) // block align
             assertEquals(32.toShort(), buf.getShort(34)) // bits per sample
             assertEquals("data", ascii(buf, 36, 4))
-            assertEquals(-1, buf.getInt(40)) // unspecified data size, like Swift
+            assertEquals(-1, buf.getInt(40)) // unspecified data size
 
             buf.position(44)
             val samples = FloatArray(4) { buf.getFloat() }

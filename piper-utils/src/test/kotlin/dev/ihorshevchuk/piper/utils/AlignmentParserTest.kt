@@ -7,7 +7,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * JVM port of PiperAlignmentParserTests (piper-objc, Swift).
+ * Tests for [AlignmentParser].
  * Guards the piper.h grouping rule: runs of non-zero codepoints form a group,
  * taking N ids and N alignments each; codepoint 0 is a separator only.
  * Special-ness is ID-based (all ids in 0..2), never codepoint-based.

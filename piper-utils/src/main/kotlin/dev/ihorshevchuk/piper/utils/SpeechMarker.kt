@@ -17,8 +17,7 @@ enum class SpeechMarkerType {
  * One speech marker: a [range] into the source text and a [byteOffset] into
  * the synthesized float32 PCM byte stream.
  *
- * Port of PiperSpeechMarker (piper-objc, Swift).
- *
+
  * Generates the sentence + word markers the reader UI uses for highlighting.
  * Two strategies:
  * - [generateMarkers]: legacy heuristic, distributes a sentence's bytes across
@@ -27,11 +26,8 @@ enum class SpeechMarkerType {
  * - [generateMarkersWithAlignment]: accurate offsets derived from per-phoneme
  *   sample counts (see [AlignmentParser] and the piper.h grouping rule).
  *
- * Offset units: UTF-16 code units throughout, matching how Android spans index
- * strings. (The Swift legacy path mixes grapheme-cluster distances for the
- * location with UTF-16 lengths; for non-BMP text that mix is inconsistent, so
- * the port standardizes on UTF-16. All ported Swift test expectations use BMP
- * text, where both agree.)
+ * Offset units: UTF-16 code units throughout, matching how Android spans
+ * index strings.
  */
 data class SpeechMarker(
     val range: MarkerRange,
@@ -177,7 +173,7 @@ data class SpeechMarker(
         return markers
     }
 
-    /** Splits on Unicode whitespace, mirroring Swift's .whitespacesAndNewlines. */
+    /** Splits on Unicode whitespace. */
     private fun splitWords(text: String): List<String> {
         val words = mutableListOf<String>()
         val current = StringBuilder()

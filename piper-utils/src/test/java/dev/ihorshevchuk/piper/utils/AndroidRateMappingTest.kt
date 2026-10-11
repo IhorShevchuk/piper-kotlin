@@ -43,7 +43,7 @@ class AndroidRateMappingTest {
     @Test
     fun maxAndroidRateIsClampedToSibilantSafeSpeed() {
         // 400 would naively give 0.25 - below the 0.45 sibilant floor.
-        // iOS parity: physical speed never exceeds 2.2x.
+        // Physical speed never exceeds 2.2x.
         val scale = SpeedCurve.lengthScaleForAndroidSpeechRate(400)
         assertEquals(1f / 2.2f, scale, 0.0001f)
         assertTrue("length_scale $scale below sibilant floor", scale >= 0.45f)

@@ -6,8 +6,7 @@ import dev.ihorshevchuk.piper.utils.PlannedSentence
 import dev.ihorshevchuk.piper.utils.SpeechMarker
 
 /**
- * Sentence-by-sentence synthesis orchestration: a direct port of
- * Piper.doSynthesize (piper-objc).
+ * Sentence-by-sentence synthesis orchestration.
  *
  * All native calls go through [NativeSynth], so this is pure JVM and
  * unit-testable. Per sentence it:

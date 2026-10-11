@@ -21,10 +21,10 @@ data class PlannedSentence(
 )
 
 /**
- * Pure sentence-planning half of the Piper.doSynthesize port (piper-objc).
+ * Pure sentence-planning half of the synthesis pipeline.
  *
  * Splits an utterance into sentences, locates each sentence in the source
- * text for markers (Swift's `text.range(of:)` sequential search), and for
+ * text for markers (sequential search), and for
  * SSML carries each fragment's prosody rate so the engine can resolve it to
  * a lengthScale via [SpeedCurve.lengthScaleForRate].
  */
@@ -63,10 +63,10 @@ object SynthesisPlanner {
 
     /**
      * Splits [text] into sentences and locates each one sequentially,
-     * mirroring Swift's `text.range(of: sentence, range: searchStartIndex..<end)`.
+     * Each sentence is located by searching forward from the previous one.
      * Ranges are offset by [baseOffset] for SSML fragments. A sentence whose
      * normalized form cannot be located (whitespace was collapsed) still gets
-     * planned - Swift synthesizes it with an NSNotFound range and no markers -
+     * planned - it is synthesized with a not-found range and no markers -
      * so it carries [RANGE_NOT_FOUND] and the orchestrator skips its markers.
      */
     private fun locateSentences(
@@ -91,8 +91,8 @@ object SynthesisPlanner {
 
     /**
      * Range for a sentence that could not be located in the source text
-     * (mirrors NSNotFound); the orchestrator synthesizes it but emits no
-     * markers, exactly like Swift's doSynthesize.
+     * (the not-found marker); the orchestrator synthesizes it but emits
+     * no markers.
      */
     val RANGE_NOT_FOUND = MarkerRange(-1, 0)
 }

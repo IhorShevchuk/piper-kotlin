@@ -18,8 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 
 /**
- * Streaming playback for [PiperEngine], the Android twin of PiperPlayer
- * (piper-player, Swift).
+ * Streaming playback for [PiperEngine].
  *
  * play()/playSsml() run on a dedicated worker thread with sentence-queue
  * semantics: the input is split into sentences, each one is synthesized in
@@ -28,9 +27,9 @@ import java.util.concurrent.atomic.AtomicReference
  * float32 from the engine, converted to 16-bit and streamed through
  * AudioTrack.
  *
- * synthesizeToFile()/synthesizeSsmlToFile() mirror the Swift player's
- * to-file helpers: they synthesize the whole input to a WAV file and return
- * its path (null when synthesis produced nothing).
+ * synthesizeToFile()/synthesizeSsmlToFile() synthesize the whole input
+ * to a WAV file and return its path (null when synthesis produced
+ * nothing).
  */
 class PiperPlayer {
     private val stopped = AtomicBoolean(false)
@@ -63,7 +62,7 @@ class PiperPlayer {
     }
 
     /**
-     * Streaming SSML playback (port of PiperPlayer.play(ssml:)). Each
+     * Streaming SSML playback. Each
      * fragment's prosody rate applies per sentence through
      * [SpeedCurve.lengthScaleForRate], exactly like
      * [PiperEngine.synthesizeSsml]; [onMarker] fires per sentence.
@@ -87,7 +86,7 @@ class PiperPlayer {
     }
 
     /**
-     * Synthesizes [text] to a WAV file (port of PiperPlayer.synthesizeToFile).
+     * Synthesizes [text] to a WAV file.
      * Returns the file path, or null when synthesis produced no audio.
      */
     fun synthesizeToFile(
@@ -108,8 +107,7 @@ class PiperPlayer {
     }
 
     /**
-     * Synthesizes [ssml] to a WAV file (port of
-     * PiperPlayer.synthesizeSSMLToFile). Returns the file path, or null when
+     * Synthesizes [ssml] to a WAV file. Returns the file path, or null when
      * synthesis produced no audio.
      */
     fun synthesizeSsmlToFile(
@@ -233,8 +231,8 @@ class PiperPlayer {
         // playback startup interrupts the engine wait inside
         // defaultSynthesizeOptions()/synthesize() and surfaces as
         // InterruptedException/PiperException: that is a clean, expected stop,
-        // never a crash (parity with PiperPlayer.stop on iOS, which just
-        // cancels the queue and lets the worker exit quietly).
+        // never a crash (a stop just cancels the queue and lets the
+        // worker exit quietly).
         exec.execute {
             try {
                 block { worker.get() !== exec }

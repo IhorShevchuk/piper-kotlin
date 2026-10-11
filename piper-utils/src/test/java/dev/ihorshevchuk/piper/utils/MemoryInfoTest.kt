@@ -7,9 +7,9 @@ import org.junit.Test
 import java.io.File
 
 /**
- * Port of MemoryInfo (piper-objc): current process memory usage in bytes,
- * or null where it cannot be determined. Mirrors Swift's Linux fallback,
- * which reads VmRSS from /proc/self/status (present on Linux and Android).
+ * Tests for [MemoryInfo]: current process memory usage in bytes,
+ * or null where it cannot be determined. VmRSS is read from
+ * /proc/self/status.
  */
 class MemoryInfoTest {
 

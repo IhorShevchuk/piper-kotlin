@@ -5,14 +5,14 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * Port of PiperSentencesExtractorTests (piper-objc).
+ * Tests for [SentenceSplitter].
  *
- * Two Apple-only behaviors are adapted for Android (no NaturalLanguage):
- * - Japanese/CJK sentences split on 。？！ terminators, emulating what
- *   NLTokenizer does on Apple platforms.
- * - An all-punctuation input stays a single chunk (on Apple, NLTokenizer
- *   finds no sentence tokens and the extractor falls back to the whole text).
- * Laziness is not ported: [SentenceSplitter.split] returns a List, which
+ * Two behaviors worth calling out:
+ * - Japanese/CJK sentences split on 。？！ terminators, which the splitter
+ *   covers explicitly.
+ * - An all-punctuation input stays a single chunk (the extractor falls
+ *   back to the whole text).
+ * [SentenceSplitter.split] returns a List, which
  * [SynthesisPlanner] consumes fully anyway.
  */
 class SentenceSplitterTest {
@@ -316,7 +316,7 @@ class SentenceSplitterTest {
         val text = "... !!! ??? ,,,   "
         val result = SentenceSplitter.split(text)
 
-        // Must not hang; on Apple the whole input stays a single chunk.
+        // Must not hang; the whole input stays a single chunk.
         assertEquals(text.trim(), result.first())
     }
 }

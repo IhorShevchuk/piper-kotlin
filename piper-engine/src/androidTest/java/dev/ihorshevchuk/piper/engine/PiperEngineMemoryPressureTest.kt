@@ -12,8 +12,8 @@ import java.io.File
 import java.net.URL
 
 /**
- * On-device tests for the memory-pressure port (Piper.memoryThresholdBytes +
- * DispatchSourceMemoryPressure handling in piper-objc, Swift).
+ * On-device tests for memory-pressure handling
+ * (memoryThresholdBytes + trim-memory reactions).
  *
  * Needs the real native library, a voice model and espeak-ng data - runs via
  * `connectedAndroidTest` on the M4 with a physical device attached, same
@@ -80,8 +80,8 @@ class PiperEngineMemoryPressureTest {
 
     @Test
     fun thresholdExceeded_recreatesSynthesizerTransparently() {
-        // Mirrors PiperIntegrationTests' `piper.memoryThresholdBytes = 1`:
-        // any real process usage exceeds 1 byte, so every sentence recreates.
+        // With the threshold forced to 1 byte, any real process usage
+        // exceeds it, so every sentence recreates the synthesizer.
         engine.memoryThresholdBytes = 1L
         try {
             val before = engine.recreateCount

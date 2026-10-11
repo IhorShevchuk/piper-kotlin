@@ -6,10 +6,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * Port of the memory-pressure rules in Piper (piper-objc, Swift):
- * - per-sentence `memoryThresholdBytes` check in doSynthesize,
- * - DispatchSourceMemoryPressure mapping (.warning -> recreate,
- *   .critical -> release).
+ * Tests for the memory-pressure rules:
+ * - per-sentence `memoryThresholdBytes` check in the synthesis loop,
+ * - pressure mapping (warning -> recreate, critical -> release).
  */
 class MemoryPressurePolicyTest {
 

@@ -83,8 +83,8 @@ class SynthesisPlannerTest {
     @Test
     fun `sentence with collapsed whitespace is still planned without a range`() {
         // Normalization collapses the inner whitespace, so the sentence text
-        // no longer occurs verbatim: Swift still synthesizes it (with an
-        // NSNotFound range and no markers) instead of dropping the audio.
+        // no longer occurs verbatim: it is still synthesized (with a
+        // not-found range and no markers) instead of dropping the audio.
         val planned = SynthesisPlanner.plan("Hello     world.")
         assertEquals(1, planned.size)
         assertEquals("Hello world.", planned[0].text)
