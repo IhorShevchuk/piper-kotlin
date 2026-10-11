@@ -69,3 +69,19 @@ jobs:
       # compiles for arm64-v8a, armeabi-v7a and x86_64.
       - name: Build native libs for all ABIs
         run: ./gradlew :piper-engine:assembleDebug --stacktrace
+      # Publish the built library outputs as a run artifact, mirroring
+      # the app repo's APK artifact: every CI run leaves a downloadable
+      # build behind (the modules are consumed as a sibling source
+      # checkout, so there is no registry publishing step yet).
+      - name: Assemble all modules
+        run: ./gradlew assembleDebug --stacktrace
+      - name: Upload library artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: piper-kotlin-libs-${{ github.sha }}
+          path: |
+            piper-engine/build/outputs/aar/*.aar
+            piper-utils/build/libs/*.jar
+            piper-player/build/outputs/aar/*.aar
+          if-no-files-found: error
+          retention-days: 30
