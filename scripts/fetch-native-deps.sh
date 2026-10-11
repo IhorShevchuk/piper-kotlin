@@ -22,7 +22,7 @@ mkdir -p "$TP"
 if [ -z "${ORT_VERSION:-}" ]; then
   ORT_VERSION="$(grep '^piper\.ortVersion=' "$ROOT/gradle.properties" | cut -d= -f2)"
 fi
-ORT_VERSION="${ORT_VERSION:-1.22.0}"
+ORT_VERSION="${ORT_VERSION:-1.31.0}"
 
 echo "== initializing submodules at their pinned SHAs"
 git -C "$ROOT" submodule update --init --recursive
@@ -49,11 +49,12 @@ for abi in arm64-v8a armeabi-v7a x86_64; do
   echo "== staged $ORT_DIR/lib/$abi/libonnxruntime.so"
 done
 
-echo "== downloading onnxruntime C/C++ headers (v$ORT_VERSION)"
-for h in onnxruntime_c_api.h onnxruntime_cxx_api.h onnxruntime_cxx_inline.h onnxruntime_float16.h; do
-  curl -fL -o "$ORT_DIR/include/$h" \
-    "https://raw.githubusercontent.com/microsoft/onnxruntime/v${ORT_VERSION}/include/onnxruntime/core/session/$h"
-done
+echo "== staging onnxruntime C/C++ headers from the AAR (v$ORT_VERSION)"
+# The AAR ships the version-matched public header set under headers/.
+# (Downloading a fixed header list from GitHub is not enough for 1.31:
+# onnxruntime_c_api.h now also includes onnxruntime_error_code.h and
+# onnxruntime_ep_c_api.h.)
+find /tmp/ort-aar/headers -name '*.h' -exec cp {} "$ORT_DIR/include/" \;
 
 echo
 echo "Native deps ready. Gradle passes these to CMake automatically:"
