@@ -1,0 +1,39 @@
+diff --git a/libpiper/src/piper.cpp b/libpiper/src/piper.cpp
+--- a/libpiper/src/piper.cpp
++++ b/libpiper/src/piper.cpp
+@@ -317,8 +317,34 @@ auto piper_create_with_options(const piper_create_options *options)
+   // stays 1 and execution stays sequential - only intra-op scales.
+   synth->session_options.SetIntraOpNumThreads(ort_intra_op_threads);
+   synth->session_options.SetInterOpNumThreads(1);
++  // Android port patch: quantized (INT8) models crash ONNX Runtime 1.22
++  // session creation on 32-bit ARM (SIGBUS, BUS_ADRALN) when graph
++  // optimizations run over ConvInteger graphs; FP16 models are
++  // unaffected. Detect quantized ops in the model bytes and disable
++  // graph optimization for those models only.
++  bool model_is_quantized = false;
++  {
++    std::ifstream model_in(model_path, std::ios::binary);
++    if (model_in) {
++      std::array<char, 65536> chunk{};
++      std::string tail;
++      while (model_in && !model_is_quantized) {
++        model_in.read(chunk.data(), chunk.size());
++        std::string window =
++            tail +
++            std::string(chunk.data(), static_cast<size_t>(model_in.gcount()));
++        if (window.find("ConvInteger") != std::string::npos ||
++            window.find("QLinearConv") != std::string::npos ||
++            window.find("MatMulInteger") != std::string::npos) {
++          model_is_quantized = true;
++        }
++        tail = window.size() > 16 ? window.substr(window.size() - 16) : window;
++      }
++    }
++  }
+   synth->session_options.SetGraphOptimizationLevel(
+-      GraphOptimizationLevel::ORT_ENABLE_BASIC);
++      model_is_quantized ? GraphOptimizationLevel::ORT_DISABLE_ALL
++                         : GraphOptimizationLevel::ORT_ENABLE_BASIC);
+   synth->session_options.SetExecutionMode(ExecutionMode::ORT_SEQUENTIAL);
+ 
+ #if !defined(WIN32)

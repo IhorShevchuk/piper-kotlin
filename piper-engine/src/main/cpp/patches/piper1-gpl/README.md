@@ -33,6 +33,23 @@ check), so a fresh `fetch-native-deps.sh` clone still builds correctly.
     The Android JNI layer fills the field from `OnnxThreadPolicy`
     (device CPU count, capped at 8); unset callers keep the default of 1.
 
+- `0003-quantized-models-disable-graph-opt.patch`
+  - Generated against piper1-gpl `404aefe` (Sep 2026), on top of 0001+0002.
+  - Quantized (INT8) Piper models crash ONNX Runtime 1.22 session
+    creation on 32-bit ARM with SIGBUS (BUS_ADRALN, unaligned access)
+    inside `Ort::Session` construction - reproduced 2026-10-11 on a
+    Galaxy A13 (32-bit Android) with uk_UA-mykyta-high and uk_UA-lada
+    INT8 models (129 ConvInteger nodes); FP16 models load fine, and
+    disabling weight prepacking did not help. The patch scans the model
+    bytes for quantized op names (`ConvInteger`, `QLinearConv`,
+    `MatMulInteger`) and uses `ORT_DISABLE_ALL` graph optimization for
+    quantized models only; everything else keeps `ORT_ENABLE_BASIC`.
+    Verified on the A13: INT8 mykyta and FP16 lada/alan previews play
+    with zero crashes. Cost: INT8 synthesis runs unoptimized (noticeably
+    slower on low-end 32-bit devices). Revisit if `piper.ortVersion` is
+    bumped - newer ONNX Runtime may handle these graphs with
+    optimizations enabled.
+
 If the pinned piper1-gpl SHA moves, regenerate: apply manually in a
 scratch checkout, `git diff` it back out, and replace this file. The CMake
 hook fails the build loudly if a patch no longer applies.
