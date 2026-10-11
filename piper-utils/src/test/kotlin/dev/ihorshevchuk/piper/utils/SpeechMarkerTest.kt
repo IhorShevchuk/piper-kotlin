@@ -5,7 +5,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * JVM port of PiperSpeechMarkerTests + AlignmentWordMarkerTests (piper-objc, Swift).
+ * Tests for [SpeechMarker] generation.
  *
  * Markers drive reader word highlighting: one sentence marker plus one word
  * marker per word, each with a UTF-16 range into the source text and a byte
@@ -88,7 +88,7 @@ class SpeechMarkerTest {
         assertEquals(SpeechMarkerType.SENTENCE, markers[0].type)
     }
 
-    // MARK: - Punctuation cases (#31, ported from AlignmentWordMarkerTests)
+    // MARK: - Punctuation cases (#31)
 
     @Test
     fun apostrophePunctuationRetainsWordRanges() {

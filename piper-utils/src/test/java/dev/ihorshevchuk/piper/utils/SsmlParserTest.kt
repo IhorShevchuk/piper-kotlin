@@ -8,7 +8,7 @@ import org.junit.Test
  * Tests for [SsmlParser], the XmlPullParser-based SSML parser.
  *
  * Behavior follows the SSML spec, not any XML parser's quirks:
- * - 1.0 is the default rate everywhere (no AVSpeechUtterance-legacy 0.5 root).
+ * - 1.0 is the default rate everywhere (no legacy 0.5 root default).
  * - `<prosody rate>`: percent ("80%"), float multiplier ("1.25"), named
  *   rates (x-slow 0.5, slow 0.75, medium 1.0, fast 1.5, x-fast 2.0), and
  *   relative percent ("+50%"/"-50%") adjusting the parent rate. Missing or

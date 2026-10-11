@@ -13,7 +13,7 @@ import org.junit.Test
 
 /**
  * Tests for [SynthesisOrchestrator], the unit-testable sentence loop behind
- * PiperEngine (port of Piper.doSynthesize). A [FakeNativeSynth] stands in for
+ * PiperEngine. A [FakeNativeSynth] stands in for
  * JNI so the orchestration - sentence skipping, cumulative marker byte
  * offsets, per-sentence option resolution, cancellation - is verified on JVM.
  */
@@ -231,7 +231,7 @@ class SynthesisOrchestratorTest {
             )
         )
 
-        // Audio still produced (Swift synthesizes with NSNotFound), markers skipped.
+        // Audio still produced (not-found range), markers skipped.
         assertEquals(listOf("Hello world."), fake.startCalls.map { it.sentence })
         assertEquals(1, seen.size)
         assertTrue(markers.isEmpty())

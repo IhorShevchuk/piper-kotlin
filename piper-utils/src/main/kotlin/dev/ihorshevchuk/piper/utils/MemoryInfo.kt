@@ -3,12 +3,10 @@ package dev.ihorshevchuk.piper.utils
 import java.io.File
 
 /**
- * Port of MemoryInfo (piper-objc).
+ * Current process memory usage.
  *
  * Returns the current process's resident memory in bytes, or null when it
- * cannot be determined. Mirrors Swift's Linux fallback: VmRSS is read from
- * /proc/self/status, which exists on both Linux and Android. (On Apple
- * platforms Swift uses the Mach task_info APIs instead.)
+ * cannot be determined. VmRSS is read from /proc/self/status.
  */
 object MemoryInfo {
     fun getMemoryUsage(): Long? {

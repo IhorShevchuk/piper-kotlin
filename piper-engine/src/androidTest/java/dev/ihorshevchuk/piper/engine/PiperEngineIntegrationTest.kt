@@ -13,8 +13,7 @@ import java.io.File
 import java.net.URL
 
 /**
- * On-device integration tests for [PiperEngine] - the Android equivalent of
- * PiperIntegrationTests (piper-objc, Swift).
+ * On-device integration tests for [PiperEngine].
  *
  * These need the real native library (libpiper_jni.so + libonnxruntime.so),
  * a voice model, and the compiled espeak-ng data, so they only run via

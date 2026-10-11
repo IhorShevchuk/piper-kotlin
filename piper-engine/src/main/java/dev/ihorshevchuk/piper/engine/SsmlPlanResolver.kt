@@ -12,7 +12,7 @@ internal data class ResolvedSsmlSentence(
 
 /**
  * JVM-testable extraction of the resolveOptions closure inside
- * [PiperEngine.synthesizeSsml] (port of Piper.getOptions): fragment order is
+ * [PiperEngine.synthesizeSsml]: fragment order is
  * preserved, each sentence's prosody rate is mapped through
  * [SpeedCurve.lengthScaleForRate], and [speakerId] overrides every sentence.
  */

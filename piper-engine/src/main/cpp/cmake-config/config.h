@@ -1,5 +1,5 @@
 #pragma once
-// Mirrors the espeak-ng-spm config.h (iOS known-good configuration).
+// espeak-ng build configuration for the vendored copy.
 #define HAVE_MKSTEMP 0
 #define USE_ASYNC 0
 #define USE_KLATT 1

@@ -1,23 +1,19 @@
 package dev.ihorshevchuk.piper.utils
 
 /**
- * Port of PiperSentencesExtractor (piper-objc).
- *
  * Splits text into sentences, then recursively subdivides long sentences so
- * every chunk stays within 22 words / 160 characters (the limits piper-objc
- * enforces before handing a sentence to the synthesizer).
+ * every chunk stays within 22 words / 160 characters (the limits enforced
+ * before handing a sentence to the synthesizer).
  *
  * Sentence boundaries: '.', '!' and '?' plus the CJK equivalents '。' '？'
- * '！' (on Apple platforms NLTokenizer finds those; Android has no
- * NLTokenizer, so the naive path covers them explicitly). Runs of
+ * '！', which the splitter covers explicitly. Runs of
  * terminators ("...", "?!", "!!") stay attached to the sentence they end.
  * A trailing fragment without a terminator is kept as its own sentence.
  * Each sentence is normalized (trimmed, internal whitespace collapsed).
  *
- * Apple parity note: when the input holds no words at all (only punctuation
- * and whitespace), NLTokenizer yields no sentence tokens and the extractor
- * falls back to the whole trimmed text as a single chunk; that behavior is
- * reproduced here.
+ * Edge case: when the input holds no words at all (only punctuation
+ * and whitespace), the extractor falls back to the whole trimmed text
+ * as a single chunk.
  */
 object SentenceSplitter {
     private val terminators = setOf(
@@ -39,7 +35,7 @@ object SentenceSplitter {
         val sentences = naiveSplit(text)
         if (sentences.isEmpty()) return emptyList()
         if (sentences.all { s -> s.all { c -> !c.isLetterOrDigit() } }) {
-            // No words anywhere: keep the whole input as one chunk (Apple fallback).
+            // No words anywhere: keep the whole input as one chunk.
             return listOf(normalize(text))
         }
         val out = mutableListOf<String>()
@@ -52,7 +48,7 @@ object SentenceSplitter {
 
     /**
      * Splits on terminator runs, keeping each run attached to the sentence
-     * it ends (Swift's Linux-fallback naiveSentenceSplit, with runs grouped).
+     * it ends (with terminator runs grouped).
      */
     private fun naiveSplit(text: String): List<String> {
         val out = mutableListOf<String>()
@@ -77,7 +73,7 @@ object SentenceSplitter {
         return out
     }
 
-    /** Recursive subdivision of over-long sentences (Swift processSentence). */
+    /** Recursive subdivision of over-long sentences. */
     private fun processSentence(sentence: String, recursionDepth: Int): List<String> {
         val trimmed = sentence.trim()
         if (trimmed.isEmpty()) return emptyList()
@@ -96,7 +92,7 @@ object SentenceSplitter {
 
     /**
      * Index just past the soft-punctuation mark nearest the center, so the
-     * mark stays attached to the left chunk (Swift findBestSoftSplitIndex).
+     * mark stays attached to the left chunk.
      */
     private fun findBestSoftSplitIndex(text: String): Int? {
         val midpoint = text.length / 2
@@ -114,7 +110,7 @@ object SentenceSplitter {
         return best
     }
 
-    /** Splits between the middle two words (Swift forceSplitByMiddleWord). */
+    /** Splits between the middle two words. */
     private fun forceSplitByMiddleWord(text: String, recursionDepth: Int): List<String> {
         val words = text.split(whitespace).filter { it.isNotEmpty() }
         if (words.size <= 1) return listOf(text)

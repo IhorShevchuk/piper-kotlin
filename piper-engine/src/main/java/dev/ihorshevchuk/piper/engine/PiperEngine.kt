@@ -14,11 +14,11 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * Kotlin port of Piper (piper-objc, Swift).
+ * Kotlin API for the libpiper synthesizer.
  *
  * Threading: libpiper is NOT thread-safe, so every native call is serialized
- * through a dedicated single-thread executor (the equivalent of the iOS serial
- * OperationQueue). Public methods block the calling thread while the native
+ * through a dedicated single-thread executor. Public methods block the
+ * calling thread while the native
  * work runs on the engine thread; call them off the UI thread.
  */
 class PiperEngine(
@@ -61,8 +61,8 @@ class PiperEngine(
     val currentSampleRate = AtomicInteger(22050)
 
     /**
-     * Optional memory threshold in bytes, mirroring Piper.memoryThresholdBytes
-     * (piper-objc). When set, the native synthesizer is recreated before any
+     * Optional memory threshold in bytes. When set, the native synthesizer
+     * is recreated before any
      * sentence that would start while [getMemoryUsage] exceeds it.
      */
     @Volatile
@@ -82,7 +82,7 @@ class PiperEngine(
     private val resolvedEspeakPath: String? = resolveEspeakDataPath(options, appFilesDir)
 
     /**
-     * Sentence orchestration (port of Piper.doSynthesize) running on the
+     * Sentence orchestration running on the
      * calling thread; every native call funnels through [JniSynth], which
      * serializes onto the engine thread via [runNative].
      */
@@ -106,7 +106,7 @@ class PiperEngine(
      * cumulative float32 byte offsets into the utterance (alignment-aware when
      * groups exist, legacy character-proportion otherwise).
      *
-     * Resilience (Sawyer long-utterance fix, ported from Swift): if
+     * Resilience (Sawyer long-utterance fix): if
      * piper_synthesize_start fails for a sentence with PIPER_ERR_GENERIC, that
      * sentence is skipped and synthesis continues with the next one instead of
      * aborting the whole utterance.
@@ -123,8 +123,8 @@ class PiperEngine(
         try {
             orchestrator.synthesize(
                 planned = SynthesisPlanner.plan(text),
-                // Per-sentence memory check (port of the doSynthesize loop in
-                // piper-objc): runs before native.start for every sentence.
+                // Per-sentence memory check: runs before native.start
+                // for every sentence.
                 resolveOptions = { ensureSynthesizer(); opts },
                 isCancelled = { cancelled.get() },
                 callbacks = SynthesisOrchestrator.Callbacks(
@@ -141,7 +141,7 @@ class PiperEngine(
 
     /**
      * Synthesizes [ssml], applying each fragment's prosody rate as the
-     * sentence lengthScale (port of Piper.synthesizeSSML).
+     * sentence lengthScale.
      *
      * [speakerId] overrides the voice default for every fragment; each
      * fragment's rate resolves through [SpeedCurve.lengthScaleForRate].
@@ -177,8 +177,7 @@ class PiperEngine(
 
     /**
      * Synthesizes [text] and writes it to [path] as a WAV file: 44-byte header,
-     * IEEE float (format tag 3), mono, 32-bit, with unspecified data size -
-     * the same layout the Swift side writes.
+     * IEEE float (format tag 3), mono, 32-bit, with unspecified data size.
      */
     fun synthesizeToFile(
         text: String,
@@ -198,7 +197,7 @@ class PiperEngine(
 
     /**
      * Synthesizes [ssml] and writes it to [path] as a WAV file (same layout as
-     * [synthesizeToFile]; port of Piper.synthesizeSSML toFileAtPath).
+     * [synthesizeToFile]).
      */
     fun synthesizeSsmlToFile(ssml: String, speakerId: Int, path: String) {
         val chunks = mutableListOf<FloatArray>()
@@ -214,7 +213,7 @@ class PiperEngine(
 
     /**
      * Current process memory usage in bytes, or null when it cannot be
-     * determined. Mirrors Piper.getMemoryUsage() (piper-objc).
+     * determined.
      */
     fun getMemoryUsage(): Long? = MemoryInfo.getMemoryUsage()
 
@@ -245,8 +244,7 @@ class PiperEngine(
      * pressure releases the native synthesizer (it is rebuilt lazily on next
      * use); low/moderate running pressure recreates it immediately. This
      * never blocks the caller: the work is queued on the engine thread behind
-     * any in-flight synthesis, mirroring the async DispatchSourceMemoryPressure
-     * handler in Piper (piper-objc).
+     * any in-flight synthesis.
      */
     fun onTrimMemory(level: Int) {
         val action = MemoryPressurePolicy.actionForTrimLevel(level)
@@ -271,8 +269,7 @@ class PiperEngine(
 
     /**
      * Destroys and immediately rebuilds the native synthesizer, blocking the
-     * caller until the engine thread finishes. Port of Piper.recreateSynthesizer()
-     * (piper-objc).
+     * caller until the engine thread finishes.
      */
     fun recreateSynthesizer() {
         runNative("piper_recreate_synthesizer") {
@@ -285,7 +282,7 @@ class PiperEngine(
     /**
      * Ensures a live native synthesizer, marshalled onto the engine thread.
      * With the default [checkThreshold] = true this is the per-sentence
-     * memory check from Piper.doSynthesize (piper-objc): when
+     * memory check: when
      * [memoryThresholdBytes] is set and exceeded, the synthesizer is
      * recreated before the sentence starts. It also lazily (re)creates the
      * handle after a critical-pressure release.

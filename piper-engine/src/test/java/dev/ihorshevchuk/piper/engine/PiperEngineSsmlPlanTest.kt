@@ -7,8 +7,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * Engine-level SSML guards (port of Piper.getOptions + synthesizeSSML
- * behavior, piper-objc): fragment order is preserved, each fragment's
+ * Engine-level SSML guards: fragment order is preserved, each fragment's
  * prosody rate resolves to the right lengthScale, the speakerId override
  * applies to every sentence, and marker ranges tile the concatenated plain
  * text without gaps or overlaps.

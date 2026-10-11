@@ -1,13 +1,14 @@
 package dev.ihorshevchuk.piper.utils
 
 /**
- * Memory-pressure rules ported from Piper (piper-objc, Swift).
+ * Memory-pressure rules.
  *
- * The Swift side combines two mechanisms:
- * - a per-sentence `memoryThresholdBytes` check in `doSynthesize`: when set
- *   and current usage exceeds it, the native synthesizer is recreated;
- * - a `DispatchSourceMemoryPressure` source: `.warning` recreates the
- *   synthesizer, `.critical` releases it (it is lazily rebuilt on next use).
+ * Two mechanisms combine:
+ * - a per-sentence `memoryThresholdBytes` check in the synthesis loop:
+ *   when set and current usage exceeds it, the native synthesizer is
+ *   recreated;
+ * - a memory-pressure reaction: warning-level pressure recreates the
+ *   synthesizer, critical releases it (lazily rebuilt on next use).
  *
  * On Android the OS delivers memory pressure through
  * `ComponentCallbacks2.onTrimMemory`; the host (e.g. the TTS service)
@@ -44,17 +45,14 @@ object MemoryPressurePolicy {
     /**
      * Whether the native synthesizer should be recreated before the next
      * sentence: true only when a threshold is set, usage is known, and usage
-     * exceeds the threshold. Mirrors the Swift
-     * `if let memoryThresholdBytes, let memory = getMemoryUsage(), memory > memoryThresholdBytes`
-     * check.
+     * exceeds the threshold.
      */
     fun shouldRecreate(usageBytes: Long?, thresholdBytes: Long?): Boolean =
         thresholdBytes != null && usageBytes != null && usageBytes > thresholdBytes
 
     /**
      * Maps a `ComponentCallbacks2.onTrimMemory` level to an action.
-     * `.critical` -> release (Swift `.critical` -> `releaseSynthesizer()`);
-     * running low/moderate -> recreate (Swift `.warning` -> `recreateSynthesizer()`).
+     * critical -> release; running low/moderate -> recreate.
      */
     fun actionForTrimLevel(level: Int): Action = when (level) {
         TRIM_MEMORY_RUNNING_CRITICAL -> Action.RELEASE

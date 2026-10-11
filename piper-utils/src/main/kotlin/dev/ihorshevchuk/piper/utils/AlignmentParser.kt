@@ -49,7 +49,7 @@ data class PhonemeOffset(
 )
 
 /**
- * Port of PiperAlignmentParser (piper-objc): applies the piper.h grouping rule.
+ * Applies the piper.h grouping rule to alignment data.
  *
  * Grouping rule (from piper.h, verbatim): phonemes look like
  * [p1, p1, 0, p2, p2, 0, ...] where the same phoneme codepoint is repeated for
