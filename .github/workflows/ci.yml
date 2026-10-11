@@ -25,6 +25,11 @@ jobs:
           distribution: temurin
           java-version: 17
       - uses: android-actions/setup-android@v3
+        with:
+          # The action's default package list includes the legacy
+          # 'tools' package, which current sdkmanager no longer offers
+          # (CI failed in this step with 'Failed to find package tools').
+          packages: platform-tools
       - name: Install Android packages
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
       - uses: gradle/actions/setup-gradle@v4
@@ -45,6 +50,11 @@ jobs:
           distribution: temurin
           java-version: 17
       - uses: android-actions/setup-android@v3
+        with:
+          # The action's default package list includes the legacy
+          # 'tools' package, which current sdkmanager no longer offers
+          # (CI failed in this step with 'Failed to find package tools').
+          packages: platform-tools
       - name: Cache NDK
         uses: actions/cache@v4
         with:
