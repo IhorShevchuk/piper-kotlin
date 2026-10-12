@@ -1,6 +1,6 @@
 # piper-kotlin
 
-[![CI](https://github.com/IhorShevchuk/piper-kotlin/actions/workflows/ci.yml/badge.svg)](https://github.com/IhorShevchuk/piper-kotlin/actions/workflows/ci.yml)
+[![CI](https://github.com/piper-tts-apps/piper-kotlin/actions/workflows/ci.yml/badge.svg)](https://github.com/piper-tts-apps/piper-kotlin/actions/workflows/ci.yml)
 
 Offline neural text-to-speech for Android. `piper-kotlin` bundles the Piper
 TTS engine (the `piper1-gpl` C++ core), the espeak-ng phonemizer, and ONNX
@@ -49,7 +49,7 @@ piper1-gpl, espeak-ng and sonic are git submodules pinned at tested SHAs
 submodule exists for the Android AAR + headers).
 
 ```bash
-git clone --recurse-submodules https://github.com/IhorShevchuk/piper-kotlin.git
+git clone --recurse-submodules https://github.com/piper-tts-apps/piper-kotlin.git
 # ...or, in an existing clone:
 git submodule update --init --recursive
 scripts/fetch-native-deps.sh   # inits submodules + stages onnxruntime into third-party/
